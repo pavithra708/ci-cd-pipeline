@@ -2,7 +2,7 @@
 title: CI/CD Debugger Environment
 emoji: 🔧
 colorFrom: purple
-colorTo: teal
+colorTo: blue
 sdk: docker
 pinned: false
 tags:
