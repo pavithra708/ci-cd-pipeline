@@ -25,7 +25,7 @@ from graders import VALID_ISSUE_TYPES, VALID_FIX_ACTIONS
 # --- Load credentials from environment variables ---
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
-HF_TOKEN = os.getenv("HF_TOKEN", "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")
+HF_TOKEN = os.getenv("HF_TOKEN", "")
 
 if not HF_TOKEN:
     raise ValueError("HF_TOKEN environment variable is not set.")
