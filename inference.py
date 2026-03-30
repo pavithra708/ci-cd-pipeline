@@ -25,17 +25,16 @@ from graders import VALID_ISSUE_TYPES, VALID_FIX_ACTIONS
 # --- Load credentials from environment variables ---
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
-HF_TOKEN = os.getenv("HF_TOKEN", "")
+HF_TOKEN = os.getenv("HF_TOKEN") or os.getenv("OPENAI_API_KEY", "")
 
 if not HF_TOKEN:
-    raise ValueError("HF_TOKEN environment variable is not set.")
+    raise ValueError("HF_TOKEN or OPENAI_API_KEY environment variable is not set.")
 
 # --- Initialize OpenAI-compatible client ---
 client = OpenAI(
     base_url=API_BASE_URL,
     api_key=HF_TOKEN
 )
-
 
 def build_prompt(observation) -> str:
     """Build the prompt shown to the LLM agent."""
