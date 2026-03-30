@@ -25,6 +25,14 @@ tasks:
     difficulty: hard
     description: "Diagnose a failing integration test due to a wrong API endpoint"
 
+  - id: task_4
+    difficulty: easy
+    description: "Identify YAML syntax error due to incorrect indentation"
+
+  - id: task_5
+    difficulty: medium
+    description: "Identify dependency version conflict between required packages"
+
 observation_space:
   task_id: string
   pipeline_yaml: string
@@ -34,10 +42,10 @@ observation_space:
 action_space:
   issue_type:
     type: string
-    values: [missing_env, missing_dep, failing_test]
+    values: [missing_env, missing_dep, failing_test, yaml_syntax, version_conflict]
   fix_action:
     type: string
-    values: [add_secret, add_numpy, fix_endpoint]
+    values: [add_secret, add_numpy, fix_endpoint, fix_indentation, update_requirements]
   explanation:
     type: string
     required: false

@@ -4,12 +4,12 @@ inference.py — Baseline inference script for CI/CD Debugger Environment
 Runs an LLM agent against all 3 tasks and prints reproducible scores.
 
 Required environment variables:
-  API_BASE_URL   — the LLM API endpoint
+  API_BASE_URL   — the LLM API endpoint (optional: defaults to https://router.huggingface.co/v1)
   MODEL_NAME     — the model identifier
   HF_TOKEN       — your Hugging Face / API key
 
 Usage:
-  export API_BASE_URL="https://api-inference.huggingface.co/v1"
+  export API_BASE_URL="https://router.huggingface.co/v1"
   export MODEL_NAME="Qwen/Qwen2.5-72B-Instruct"
   export HF_TOKEN="hf_your_token_here"
   python inference.py

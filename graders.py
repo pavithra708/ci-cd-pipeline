@@ -45,5 +45,5 @@ def grade(action: Action, ground_truth: dict) -> Reward:
 
 
 # Valid values the agent must choose from — this makes grading deterministic
-VALID_ISSUE_TYPES = ["missing_env", "missing_dep", "failing_test"]
-VALID_FIX_ACTIONS = ["add_secret", "add_numpy", "fix_endpoint"]
+VALID_ISSUE_TYPES = ["missing_env", "missing_dep", "failing_test", "yaml_syntax", "version_conflict"]
+VALID_FIX_ACTIONS = ["add_secret", "add_numpy", "fix_endpoint", "fix_indentation", "update_requirements"]

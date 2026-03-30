@@ -89,6 +89,76 @@ The endpoint /api/v1/health returned 404. Expected 200.
         },
         "difficulty": "hard",
         "description": "An integration test is failing because an API endpoint URL is wrong."
+    },
+
+    "task_4": {
+        "observation": Observation(
+            task_id="task_4",
+            pipeline_yaml="""
+name: Build and Push
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker image
+        run: docker build -t myapp .
+      - name: Push image
+        run: docker push myapp:latest
+""",
+            error_log="""
+Error: YAML parse error: mapping values are not allowed here
+  in "<string>", line 8, column 9:
+    - name: Build Docker image
+        ^
+""",
+            hint="Check the YAML indentation carefully."
+        ),
+        "ground_truth": {
+            "issue_type": "yaml_syntax",
+            "fix_action": "fix_indentation"
+        },
+        "difficulty": "easy",
+        "description": "A YAML syntax error due to incorrect indentation in the pipeline."
+    },
+
+    "task_5": {
+        "observation": Observation(
+            task_id="task_5",
+            pipeline_yaml="""
+name: Build Python App
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, 3.10, 3.11]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest tests/
+""",
+            error_log="""
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. 
+This behavior is the source of the following dependency conflicts.
+package-a 2.0.0 requires package-b>=1.5, but you have package-b 1.2.0 which is incompatible.
+""",
+            hint=None
+        ),
+        "ground_truth": {
+            "issue_type": "version_conflict",
+            "fix_action": "update_requirements"
+        },
+        "difficulty": "medium",
+        "description": "A dependency version conflict exists where required packages have incompatible versions."
     }
 }
 

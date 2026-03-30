@@ -45,8 +45,8 @@ The agent must output a structured JSON diagnosis:
 
 | Field | Type | Valid Values |
 |---|---|---|
-| `issue_type` | string | `missing_env`, `missing_dep`, `failing_test` |
-| `fix_action` | string | `add_secret`, `add_numpy`, `fix_endpoint` |
+| `issue_type` | string | `missing_env`, `missing_dep`, `failing_test`, `yaml_syntax`, `version_conflict` |
+| `fix_action` | string | `add_secret`, `add_numpy`, `fix_endpoint`, `fix_indentation`, `update_requirements` |
 | `explanation` | string (optional) | Agent's reasoning |
 
 ## Tasks
@@ -56,6 +56,8 @@ The agent must output a structured JSON diagnosis:
 | `task_1` | Easy | Missing environment variable (`API_KEY`) |
 | `task_2` | Medium | Missing Python dependency (`numpy`) |
 | `task_3` | Hard | Failing integration test (wrong API endpoint) |
+| `task_4` | Easy | YAML syntax error with incorrect indentation |
+| `task_5` | Medium | Dependency version conflict in requirements |
 
 ## Reward Function
 
@@ -95,7 +97,7 @@ docker run -p 7860:7860 cicd-debugger-env
 ### Run Inference
 
 ```bash
-export API_BASE_URL="https://api-inference.huggingface.co/v1"
+export API_BASE_URL="https://router.huggingface.co/v1"
 export MODEL_NAME="Qwen/Qwen2.5-72B-Instruct"
 export HF_TOKEN="hf_your_token_here"
 python inference.py
@@ -110,7 +112,9 @@ Tested with `Qwen/Qwen2.5-72B-Instruct`:
 | task_1 | Easy | 1.0 |
 | task_2 | Medium | 1.0 |
 | task_3 | Hard | 1.0 |
-| **Average** | | **1.0** |
+| task_4 | Easy | 0.0 |
+| task_5 | Medium | 0.0 |
+| **Average** | | **0.6** |
 
 ## Project Structure
 
