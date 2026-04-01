@@ -65,16 +65,9 @@ Response format:
 
 def run_agent_on_task(task_id: str) -> dict:
     """Run the agent on a single task and return the result."""
-    print(f"\n{'='*50}")
-    print(f"Running task: {task_id}")
-    print(f"{'='*50}")
-
     # Set up environment
     env = CICDDebuggerEnv(task_id=task_id)
     observation = env.reset()
-
-    print(f"Difficulty: {env.current_task['difficulty']}")
-    print(f"Error log: {observation.error_log.strip()}")
 
     # Build prompt and call LLM
     prompt = build_prompt(observation)
@@ -88,7 +81,6 @@ def run_agent_on_task(task_id: str) -> dict:
         )
 
         raw_response = response.choices[0].message.content.strip()
-        print(f"Agent response: {raw_response}")
 
         # Parse JSON response
         # Strip markdown code fences if present
@@ -102,15 +94,11 @@ def run_agent_on_task(task_id: str) -> dict:
         )
 
     except (json.JSONDecodeError, KeyError) as e:
-        print(f"Failed to parse agent response: {e}")
         # Return a blank action so grader gives 0.0
         action = Action(issue_type="", fix_action="")
 
     # Step the environment with the agent's action
     _, reward, done, info = env.step(action)
-
-    print(f"Score: {reward.score}")
-    print(f"Message: {reward.message}")
 
     return {
         "task_id": task_id,
@@ -123,29 +111,53 @@ def run_agent_on_task(task_id: str) -> dict:
 
 
 def main():
-    print("CI/CD Debugger Environment — Baseline Inference")
-    print(f"Model: {MODEL_NAME}")
-    print(f"API: {API_BASE_URL}")
+    # Print START marker with initialization info
+    print("[START]")
+    print(json.dumps({
+        "model": MODEL_NAME,
+        "api_base": API_BASE_URL,
+        "environment": "cicd-debugger-env",
+        "num_tasks": 5
+    }))
 
     task_ids = CICDDebuggerEnv.available_tasks()
     results = []
+    total_score = 0.0
 
     for task_id in task_ids:
         result = run_agent_on_task(task_id)
         results.append(result)
-
-    # Print final summary
-    print(f"\n{'='*50}")
-    print("FINAL SCORES SUMMARY")
-    print(f"{'='*50}")
-    total_score = 0.0
-    for r in results:
-        print(f"  {r['task_id']} ({r['difficulty']:6s}): {r['score']:.1f} — {r['message']}")
-        total_score += r["score"]
+        
+        # Print STEP marker for each task completion
+        print("[STEP]")
+        print(json.dumps({
+            "task_id": result["task_id"],
+            "difficulty": result["difficulty"],
+            "score": result["score"],
+            "issue_correct": result["issue_correct"],
+            "fix_correct": result["fix_correct"],
+            "message": result["message"]
+        }))
+        
+        total_score += result["score"]
 
     avg_score = total_score / len(results)
-    print(f"\nAverage score: {avg_score:.2f} / 1.0")
-    print(f"Total score:   {total_score:.1f} / {float(len(results)):.1f}")
+
+    # Print END marker with final results
+    print("[END]")
+    print(json.dumps({
+        "total_tasks": len(results),
+        "total_score": total_score,
+        "average_score": avg_score,
+        "scores_by_task": [
+            {
+                "task_id": r["task_id"],
+                "difficulty": r["difficulty"],
+                "score": r["score"]
+            }
+            for r in results
+        ]
+    }))
 
     return results
 
