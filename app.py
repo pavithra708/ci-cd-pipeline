@@ -40,11 +40,14 @@ def root():
 
 
 @app.post("/reset")
-def reset(request: ResetRequest):
+def reset(request: Optional[ResetRequest] = None):
     """
     Reset the environment for a given task.
     Returns the initial observation (broken pipeline + error log).
     """
+    if request is None:
+        request = ResetRequest()
+
     valid_tasks = CICDDebuggerEnv.available_tasks()
     if request.task_id not in valid_tasks:
         raise HTTPException(
