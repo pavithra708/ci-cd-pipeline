@@ -1,8 +1,7 @@
 import uvicorn
 
-# This acts as an entry point for OpenEnv validation
-def run():
+def main():
     uvicorn.run("app:app", host="0.0.0.0", port=7860, reload=False)
 
 if __name__ == "__main__":
-    run()
+    main()
